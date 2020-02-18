@@ -1,24 +1,12 @@
 package services
 
-import (
-	"fmt"
-	"net/http"
+import "go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/gin-gonic/gin"
-	"github.com/manoj2210/distributed-download-system-backend/internals/errors"
-	"github.com/manoj2210/distributed-download-system-backend/internals/helpers"
-	"github.com/manoj2210/distributed-download-system-backend/internals/models"
-)
+type DownloadService struct{
+	repo *mongo.Collection
+}
 
-func Download(c *gin.Context) {
-	sam := models.DownloadPOSTRequest{}
-	if err := c.ShouldBindJSON(&sam); err != nil {
-		restErr := errors.NewBadRequestError("invalid request body")
-		c.JSON(restErr.Status, restErr)
-		return
-	}
-	fmt.Println(sam)
-	//Check whether downloadable and download,push to db
+func NewDownloadService(collection *mongo.Collection) *DownloadService{
+	return &DownloadService{repo:collection}
 
-	c.JSON(http.StatusOK, helpers.DownloadSuccess())
 }

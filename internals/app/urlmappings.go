@@ -1,29 +1,30 @@
 package app
 
 import (
-	"fmt"
-	"log"
-	"net/http"
-
+	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/manoj2210/distributed-download-system-backend/internals/config"
-	"github.com/manoj2210/distributed-download-system-backend/internals/models"
-	"github.com/manoj2210/distributed-download-system-backend/internals/services"
-	"gopkg.in/mgo.v2/bson"
+	"github.com/manoj2210/distributed-download-system-backend/internals/controllers"
+	models "github.com/manoj2210/distributed-download-system-backend/internals/models"
+	"go.mongodb.org/mongo-driver/bson"
+	"log"
+	"net/http"
 )
 
-func mapUrls(db *config.DB) {
+func mapUrls(appConfig *config.AppConfig) {
 	router.GET("/ping", func(c *gin.Context) {
 		result := models.BoxOffice{}
-		err := db.Collection.Find(bson.M{"budget": bson.M{"$gt": 15}}).One(&result)
+		err := appConfig.Downloads.FindOne(context.TODO(), bson.D{}).Decode(&result)
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println("Movie:", result)
+		//fmt.Println("Movie:", result)
 		c.JSON(http.StatusOK, result)
 		// c.String(http.StatusOK, "pong")
 	})
 
-	router.POST("/download", services.Download)
+	downloadController:=controllers.NewDownloadController(appConfig)
+
+	router.POST("/download", downloadController.Download)
 
 }
