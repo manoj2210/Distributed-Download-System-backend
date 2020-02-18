@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"github.com/manoj2210/distributed-download-system-backend/internals/config"
 	"github.com/manoj2210/distributed-download-system-backend/internals/services"
 	"net/http"
@@ -17,15 +16,12 @@ type DownloadController struct{
 }
 
 func (ctrl *DownloadController)Download(c *gin.Context) {
-	sam := models.DownloadPOSTRequest{}
-	if err := c.ShouldBindJSON(&sam); err != nil {
+	post := models.DownloadPOSTRequest{}
+	if err := c.ShouldBindJSON(&post); err != nil {
 		restErr := errors.NewBadRequestError("invalid request body")
 		c.JSON(restErr.Status, restErr)
 		return
 	}
-	fmt.Println(sam)
-	//Check whether downloadable and download,push to db
-
 	c.JSON(http.StatusOK, helpers.DownloadSuccess())
 }
 
