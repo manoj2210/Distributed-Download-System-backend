@@ -2,12 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="82bad400-db78-4548-9b71-3671f8c1251c" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/internals/helpers/filedownload.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internals/services/uploadNdownload.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internals/app/urlmappings.go" beforeDir="false" afterPath="$PROJECT_DIR$/internals/app/urlmappings.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internals/controllers/download.go" beforeDir="false" afterPath="$PROJECT_DIR$/internals/controllers/download.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internals/helpers/download.go" beforeDir="false" afterPath="$PROJECT_DIR$/internals/helpers/download.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internals/helpers/filedownload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internals/helpers/filedownload.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internals/services/uploadNdownload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internals/services/uploadNdownload.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,6 +71,10 @@
     <proxy>direct</proxy>
   </component>
   <component name="WindowStateProjectService">
+    <state x="440" y="260" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1582136366011">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="440" y="260" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1440.900@0.0.1440.900" timestamp="1582136366011" />
     <state x="385" y="196" key="search.everywhere.popup" timestamp="1582032721033">
       <screen x="0" y="0" width="1440" height="900" />
     </state>

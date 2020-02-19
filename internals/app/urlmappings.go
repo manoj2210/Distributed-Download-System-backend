@@ -26,5 +26,6 @@ func mapUrls(appConfig *config.AppConfig) {
 	downloadController:=controllers.NewDownloadController(appConfig)
 
 	router.POST("/download", downloadController.Download)
+	//router.GET("/ws",downloadController.DisplayStatus)
 
 }

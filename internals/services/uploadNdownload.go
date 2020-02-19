@@ -64,10 +64,10 @@ func DownloadFile(fileName string) {
 
 	// For CRUD operations, here is an example
 	db := conn.Database("myfiles")
-	fsFiles := db.Collection("fs.files")
+	fsFiles := db.Collection("fs.chunks")
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	var results bson.M
-	err := fsFiles.FindOne(ctx, bson.M{}).Decode(&results)
+	err := fsFiles.FindOne(ctx, bson.M{"n":1}).Decode(&results)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -76,9 +76,10 @@ func DownloadFile(fileName string) {
 
 	bucket, _ := gridfs.NewBucket(
 		db,
+		options.GridFSBucket().SetChunkSizeBytes(1000),
 	)
 	var buf bytes.Buffer
-	dStream, err := bucket.DownloadToStreamByName(fileName, &buf)
+	dStream, err := bucket.DownloadToStream("filename", &buf)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -2,42 +2,49 @@ package helpers
 
 import (
 	"fmt"
-	"github.com/dustin/go-humanize"
+	"log"
+
+	//"github.com/dustin/go-humanize"
 	"io"
 	"net/http"
 	"os"
-	"strings"
+	//"strings"
 )
 
 type WriteCounter struct {
-	Total uint64
+	Total int64
+	l int64
 }
+
+
 
 func (wc *WriteCounter) Write(p []byte) (int, error) {
 	n := len(p)
-	wc.Total += uint64(n)
-	wc.PrintProgress()
+	wc.Total += (int64(n)/wc.l)*100
+	//wc.PrintProgress()
 	return n, nil
 }
 
-func (wc WriteCounter) PrintProgress() {
-	fmt.Printf("\r%s", strings.Repeat(" ", 35))
-	fmt.Printf("\rDownloading... %s complete", humanize.Bytes(wc.Total))
-}
+//func (wc WriteCounter) PrintProgress() {
+//	fmt.Printf("\r%s", strings.Repeat(" ", 35))
+//	fmt.Printf("\rDownloading... %s complete", humanize.Bytes(wc.Total))
+//}
 
-func StartDownload() {
+func StartDownload(fileName string,fileUrl string,counter *WriteCounter) {
 	fmt.Println("Download Started")
-
-	fileUrl := "https://upload.wikimedia.org/wikipedia/commons/d/d6/Wp-w4-big.jpg"
-	err := DownloadFile("avatar.jpg", fileUrl)
+	os.Mkdir("downloads/"+fileName,os.ModePerm)
+	fileName="downloads/"+fileName+"/"+fileName
+	err := DownloadFile(fileName, fileUrl,counter)
 	if err != nil {
-		panic(err)
+		log.Println(err)
+		os.Remove(fileName+ ".tmp")
+		return
 	}
 
 	fmt.Println("Download Finished")
 }
 
-func DownloadFile(filepath string, url string) error {
+func DownloadFile(filepath string, url string, counter *WriteCounter) error {
 
 	out, err := os.Create(filepath + ".tmp")
 	if err != nil {
@@ -49,7 +56,7 @@ func DownloadFile(filepath string, url string) error {
 		return err
 	}
 	defer resp.Body.Close()
-	counter := &WriteCounter{}
+	counter.l=resp.ContentLength
 	if _, err = io.Copy(out, io.TeeReader(resp.Body, counter)); err != nil {
 		out.Close()
 		return err
