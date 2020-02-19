@@ -13,11 +13,11 @@ import (
 
 type DownloadController struct{
 	DownloadService *services.DownloadService
-	Client *mongo.Client
+	UploadService   *services.UploadService
 }
 
 func NewDownloadController(c *config.AppConfig) *DownloadController{
-	return &DownloadController{DownloadService:services.NewDownloadService(c.Downloads),Client:c.DB}
+	return &DownloadController{DownloadService:services.NewDownloadService(c.Downloads),UploadService:services.NewUploadService(c.DB)}
 }
 
 func (ctrl *DownloadController)Download(c *gin.Context) {
