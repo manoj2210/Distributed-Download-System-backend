@@ -13,14 +13,7 @@ import (
 
 func mapUrls(appConfig *config.AppConfig) {
 	router.GET("/ping", func(c *gin.Context) {
-		result := models.BoxOffice{}
-		err := appConfig.Downloads.FindOne(context.TODO(), bson.D{}).Decode(&result)
-		if err != nil {
-			log.Fatal(err)
-		}
-		//fmt.Println("Movie:", result)
-		c.JSON(http.StatusOK, result)
-		// c.String(http.StatusOK, "pong")
+		c.String(http.StatusOK, "pong")
 	})
 
 	downloadController:=controllers.NewDownloadController(appConfig)

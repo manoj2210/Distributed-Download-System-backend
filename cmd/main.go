@@ -39,16 +39,7 @@ func main() {
 
 	fmt.Println("Connected to MongoDB! at "+appConfig.DBConfig.DBHOST+":"+appConfig.DBConfig.DBPORT)
 
-	appConfig.Downloads=client.Database(appConfig.DBConfig.DBNAME).Collection("downloads")
+	appConfig.Downloads=client.Database(appConfig.DBConfig.DBNAME).Collection(config.getEnv("DOWNLOADCOL","downloads"))
 
 	app.StartApplication(appConfig)
-	// session, err := mgo.Dial("127.0.0.1")
-	// c := session.DB("ddsdb").C("downloads")
-	// db := &config.DB{Session: session, Collection: c}
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// defer session.Close()
-
-	// app.StartApplication(db)
 }
