@@ -1,18 +1,23 @@
 package controllers
 
 import (
-	"github.com/manoj2210/distributed-download-system-backend/internals/config"
-	"github.com/manoj2210/distributed-download-system-backend/internals/services"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"github.com/manoj2210/distributed-download-system-backend/internals/config"
 	"github.com/manoj2210/distributed-download-system-backend/internals/errors"
 	"github.com/manoj2210/distributed-download-system-backend/internals/helpers"
 	"github.com/manoj2210/distributed-download-system-backend/internals/models"
+	"github.com/manoj2210/distributed-download-system-backend/internals/services"
+	"go.mongodb.org/mongo-driver/mongo"
+	"net/http"
 )
 
 type DownloadController struct{
 	DownloadService *services.DownloadService
+	Client *mongo.Client
+}
+
+func NewDownloadController(c *config.AppConfig) *DownloadController{
+	return &DownloadController{DownloadService:services.NewDownloadService(c.Downloads),Client:c.DB}
 }
 
 func (ctrl *DownloadController)Download(c *gin.Context) {
@@ -27,10 +32,17 @@ func (ctrl *DownloadController)Download(c *gin.Context) {
 		c.JSON(restErr.Status, restErr)
 		return
 	}
-	c.JSON(http.StatusOK, helpers.DownloadSuccess())
-	go helpers.StartDownload(post.GroupID,post.Url,&helpers.WriteCounter{})
+	c.JSON(http.StatusCreated, helpers.DownloadSuccess())
+
+	//Create a downloading queue table and set the writeCounter then access with websocket
+
+	go helpers.StartDownload(post.GroupID,post.Url)
 }
 
+func (ctrl *DownloadController)DownloadtableDetails(c *gin.Context) {
+	grpID:=c.Param("grpID")
+	c.JSON(http.StatusOK,models.DownloadTable[grpID])
+}
 
 //func Echo(ws *websocket.Conn) {
 //
@@ -50,6 +62,4 @@ func (ctrl *DownloadController)Download(c *gin.Context) {
 //	handler.ServeHTTP(c.Writer, c.Request)
 //}
 
-func NewDownloadController(config *config.AppConfig) *DownloadController{
-	return &DownloadController{DownloadService:services.NewDownloadService(config.Downloads)}
-}
+

@@ -4,36 +4,35 @@ import (
 "bytes"
 "context"
 "fmt"
-"io/ioutil"
+	"go.mongodb.org/mongo-driver/mongo"
+	"io/ioutil"
 "log"
 "os"
 "time"
 
 "go.mongodb.org/mongo-driver/bson"
-"go.mongodb.org/mongo-driver/mongo"
 "go.mongodb.org/mongo-driver/mongo/gridfs"
 "go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func InitiateMongoClient() *mongo.Client {
-	var err error
-	var client *mongo.Client
-	uri := "mongodb://localhost:27017"
-	opts := options.Client()
-	opts.ApplyURI(uri)
-	opts.SetMaxPoolSize(5)
-	if client, err = mongo.Connect(context.Background(), opts); err != nil {
-		fmt.Println(err.Error())
-	}
-	return client
-}
-func UploadFile(file, filename string) {
+//func InitiateMongoClient() *mongo.Client {
+//	var err error
+//	var client *mongo.Client
+//	uri := "mongodb://localhost:27017"
+//	opts := options.Client()
+//	opts.ApplyURI(uri)
+//	opts.SetMaxPoolSize(5)
+//	if client, err = mongo.Connect(context.Background(), opts); err != nil {
+//		fmt.Println(err.Error())
+//	}
+//	return client
+//}
+func UploadFile(file string, filename string,conn *mongo.Client) {
 
 	data, err := ioutil.ReadFile(file)
 	if err != nil {
 		log.Fatal(err)
 	}
-	conn := InitiateMongoClient()
 	bucket, err := gridfs.NewBucket(
 		conn.Database("myfiles"),
 		options.GridFSBucket().SetChunkSizeBytes(1000),
@@ -59,8 +58,7 @@ func UploadFile(file, filename string) {
 	}
 	log.Printf("Write file to DB was successful. File size: %d M\n", fileSize)
 }
-func DownloadFile(fileName string) {
-	conn := InitiateMongoClient()
+func DownloadFile(fileName string,conn mongo.Client) {
 
 	// For CRUD operations, here is an example
 	db := conn.Database("myfiles")

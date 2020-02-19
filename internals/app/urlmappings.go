@@ -26,6 +26,7 @@ func mapUrls(appConfig *config.AppConfig) {
 	downloadController:=controllers.NewDownloadController(appConfig)
 
 	router.POST("/download", downloadController.Download)
+	router.GET("/download/description/:grpID",downloadController.DownloadtableDetails)
 	//router.GET("/ws",downloadController.DisplayStatus)
 
 }
