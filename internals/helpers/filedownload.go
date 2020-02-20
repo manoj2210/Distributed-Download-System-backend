@@ -41,7 +41,7 @@ func StartDownload(fileName string,fileUrl string,client *mongo.Client) {
 
 
 	fmt.Println("Uploading")
-	err=UploadFiletoDB(fileName,filenname,client)
+	err=UploadFiletoDB(fileName,fileName,client)
 	if err !=nil{
 		log.Println(err)
 	}

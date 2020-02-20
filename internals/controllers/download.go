@@ -7,7 +7,7 @@ import (
 	"github.com/manoj2210/distributed-download-system-backend/internals/helpers"
 	"github.com/manoj2210/distributed-download-system-backend/internals/models"
 	"github.com/manoj2210/distributed-download-system-backend/internals/services"
-	"go.mongodb.org/mongo-driver/mongo"
+	//"go.mongodb.org/mongo-driver/mongo"
 	"net/http"
 )
 
@@ -36,7 +36,7 @@ func (ctrl *DownloadController)Download(c *gin.Context) {
 
 	//Create a downloading queue table and set the writeCounter then access with websocket
 
-	go helpers.StartDownload(post.GroupID,post.Url,ctrl.UploadService)
+	go helpers.StartDownload(post.GroupID,post.Url,ctrl.UploadService.Repo)
 }
 
 func (ctrl *DownloadController)DownloadtableDetails(c *gin.Context) {

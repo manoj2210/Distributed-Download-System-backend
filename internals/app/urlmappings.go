@@ -1,13 +1,13 @@
 package app
 
 import (
-	"context"
+	//"context"
 	"github.com/gin-gonic/gin"
 	"github.com/manoj2210/distributed-download-system-backend/internals/config"
 	"github.com/manoj2210/distributed-download-system-backend/internals/controllers"
-	models "github.com/manoj2210/distributed-download-system-backend/internals/models"
-	"go.mongodb.org/mongo-driver/bson"
-	"log"
+	//models "github.com/manoj2210/distributed-download-system-backend/internals/models"
+//	"go.mongodb.org/mongo-driver/bson"
+//	"log"
 	"net/http"
 )
 

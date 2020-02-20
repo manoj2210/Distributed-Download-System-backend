@@ -3,7 +3,7 @@ package app
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/manoj2210/distributed-download-system-backend/internals/config"
-	"github.com/manoj2210/distributed-download-system-backend/internals/models"
+	//"github.com/manoj2210/distributed-download-system-backend/internals/models"
 	"log"
 	"strconv"
 )
