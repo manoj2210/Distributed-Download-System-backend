@@ -1,13 +1,9 @@
 package app
 
 import (
-	//"context"
 	"github.com/gin-gonic/gin"
 	"github.com/manoj2210/distributed-download-system-backend/internals/config"
 	"github.com/manoj2210/distributed-download-system-backend/internals/controllers"
-	//models "github.com/manoj2210/distributed-download-system-backend/internals/models"
-//	"go.mongodb.org/mongo-driver/bson"
-//	"log"
 	"net/http"
 )
 
@@ -19,7 +15,11 @@ func mapUrls(appConfig *config.AppConfig) {
 	downloadController:=controllers.NewDownloadController(appConfig)
 
 	router.POST("/download", downloadController.Download)
-	router.GET("/download/description/:grpID",downloadController.DownloadtableDetails)
+	router.GET("/download/description/:grpID",downloadController.DownloadTableDetails)
+	router.GET("/serve/:hash/:n",downloadController.ServeFiles)
+	router.GET("/getFileID/:grpID",downloadController.GetFileID)
+
+
 	//router.GET("/ws",downloadController.DisplayStatus)
 
 }

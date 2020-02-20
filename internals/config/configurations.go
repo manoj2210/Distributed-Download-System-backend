@@ -22,7 +22,6 @@ type AppConfig struct {
 	Server   serverConfig
 	DBConfig dbConfig
 	DB       *mongo.Client
-	Downloads *mongo.Collection
 }
 
 func getEnv(key string, defaultval string) string {

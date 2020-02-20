@@ -22,7 +22,7 @@ func init() {
 
 func main() {
 
-	clientOptions := options.Client().ApplyURI("mongodb+srv://dbUser:kavithammk1@cluster0-u2tvk.mongodb.net/test?retryWrites=true&w=majority")
+	clientOptions := options.Client().ApplyURI("mongodb://"+appConfig.DBConfig.DBHOST+":"+appConfig.DBConfig.DBPORT)
 	client, err := mongo.Connect(context.TODO(), clientOptions)
 	if err != nil {
 		log.Fatal(err)
@@ -38,8 +38,6 @@ func main() {
 	}
 
 	fmt.Println("Connected to MongoDB! at "+appConfig.DBConfig.DBHOST+":"+appConfig.DBConfig.DBPORT)
-
-	appConfig.Downloads=client.Database(appConfig.DBConfig.DBNAME).Collection("downloads")
 
 	app.StartApplication(appConfig)
 }

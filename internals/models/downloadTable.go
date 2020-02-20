@@ -1,46 +1,71 @@
 package models
 
 import (
+	"errors"
+	"fmt"
+	"strconv"
 	"time"
 )
 
-const (
-	Downloading=0
-	Downloaded=1
-	Error=2
-	UploadedtoDB=3
-)
 
-var DownloadTable=make(map[string]*DownloadableFile)
+var DownloadTable=make(map[string]*DownloadableFileDescription)
 
-type DownloadableFile struct {
-	Url string    `json:"url"`
-	Time time.Time  `json:"time"`
-	Counter *WriteCounter  `json:"counter"`
-	Status uint8    `json:"status"`
+type DownloadableFileDescription struct {
+	Url string    `json:"url" bson:"url""`
+	Time time.Time  `json:"time" bson:"time""`
+	Counter *WriteCounter  `json:"counter" bson:"counter""`
+	Status string    `json:"status" bson:"status"`
+
 }
+func UpdateStatus(grpID string,s string)error{
+      _,ok:=DownloadTable[grpID]
+      if ok{
+		  DownloadTable[grpID].Status=s
+		  return nil
+	  }
+	  return errors.New("Data Not available")
+}
+//func UpdateStatus(grpID string,s string,d *mongo.Client)error{
+//	collection:=d.Database("ddsdb").Collection("downloadTable")
+//	_,err:=collection.UpdateOne(context.TODO(),bson.M{"grpID":grpID},bson.M{"$set": bson.M{"status":s}})
+//	if err!=nil{
+//		return err
+//	}
+//	return nil
+//}
 
-func NewDownloadableFile(p string)*DownloadableFile{
-	return &DownloadableFile{p,time.Now(),&WriteCounter{},Downloading}
+func NewDownloadableFileDescription(p string)*DownloadableFileDescription{
+	return &DownloadableFileDescription{p,time.Now(),&WriteCounter{},"Downloading"}
 }
 
 type WriteCounter struct {
-	Total int64
-	L int64
+	Total int
+	L int
+	Percent string
 }
 
 func (wc *WriteCounter) Write(p []byte) (int, error) {
 	n := len(p)
-	wc.Total += (int64(n)/wc.L)*100
-	//wc.PrintProgress()
+	wc.Total += n
+	wc.Percent=strconv.Itoa(wc.Total/wc.L)
 	return n, nil
 }
 
-func AddNewDownloadableFile(grpId string,df *DownloadableFile){
+func AddNewDownloadableFile(grpId string,df *DownloadableFileDescription)error{
 	for key,value := range DownloadTable{
 		if  time.Now().Sub(value.Time).Hours() >= 1{
 			delete(DownloadTable,key)
 		}
 	}
 	DownloadTable[grpId]=df
+	fmt.Println("file",DownloadTable[grpId])
+	return nil
+}
+
+func GetDownloadableFile(grpID string)(*DownloadableFileDescription,error){
+	_,ok:=DownloadTable[grpID]
+	if ok{
+		return DownloadTable[grpID],nil
+	}
+	return nil,errors.New("Data Not available")
 }
