@@ -36,7 +36,7 @@ func (ctrl *DownloadController)Download(c *gin.Context) {
 
 	//Create a downloading queue table and set the writeCounter then access with websocket
 
-	go helpers.StartDownload(post.GroupID,post.Url)
+	go helpers.StartDownload(post.GroupID,post.Url,ctrl.UploadService)
 }
 
 func (ctrl *DownloadController)DownloadtableDetails(c *gin.Context) {

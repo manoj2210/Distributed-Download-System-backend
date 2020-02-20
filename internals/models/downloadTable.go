@@ -6,8 +6,9 @@ import (
 
 const (
 	Downloading=0
-	Error=1
-	UploadedtoDB=2
+	Downloaded=1
+	Error=2
+	UploadedtoDB=3
 )
 
 var DownloadTable=make(map[string]*DownloadableFile)

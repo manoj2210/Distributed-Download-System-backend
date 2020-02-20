@@ -6,6 +6,7 @@ import (
 	"log"
 	//"github.com/dustin/go-humanize"
 	"io"
+	"go.mongodb.org/mongo-driver/mongo"
 	"net/http"
 	"os"
 	//"strings"
@@ -18,7 +19,7 @@ import (
 //	fmt.Printf("\rDownloading... %s complete", humanize.Bytes(wc.Total))
 //}
 
-func StartDownload(fileName string,fileUrl string) {
+func StartDownload(fileName string,fileUrl string,client *mongo.Client) {
 
 	//Adding to Download table
 	file:=models.NewDownloadableFile(fileUrl)
@@ -35,10 +36,18 @@ func StartDownload(fileName string,fileUrl string) {
 		return
 	}
 
-
-
-	models.DownloadTable[fileName].Status=models.UploadedtoDB
+	models.DownloadTable[fileName].Status=models.Downloaded
 	fmt.Println("Download Finished")
+
+
+	fmt.Println("Uploading")
+	err=UploadFiletoDB(fileName,filenname,client)
+	if err !=nil{
+		log.Println(err)
+	}
+	models.DownloadTable[fileName].Status=models.UploadedtoDB
+	
+
 }
 
 func DownloadFile(filepath string, url string, counter *models.WriteCounter) error {
