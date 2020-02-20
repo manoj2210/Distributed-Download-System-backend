@@ -8,7 +8,6 @@ import (
 	"github.com/manoj2210/distributed-download-system-backend/internals/models"
 	"github.com/manoj2210/distributed-download-system-backend/internals/services"
 	"net/http"
-	"strconv"
 )
 
 type DownloadController struct{
@@ -35,7 +34,7 @@ func (ctrl *DownloadController)Download(c *gin.Context) {
 	f:=models.NewDownloadableFileDescription(post.Url)
 	er:=models.AddNewDownloadableFile(post.GroupID,f)
 	if er!=nil{
-		restErr:= errors.NewBadRequestError("Unable to insert to DB")
+		restErr:= errors.NewBadRequestError("Unable to insert")
 		c.JSON(restErr.Status, restErr)
 		return
 	}
@@ -49,7 +48,6 @@ func (ctrl *DownloadController)Download(c *gin.Context) {
 
 func (ctrl *DownloadController)DownloadTableDetails(c *gin.Context) {
 	grpID:=c.Param("grpID")
-	//m,err:=ctrl.DownloadService.GetDownloadableFile(grpID)
 	m,err:=models.GetDownloadableFile(grpID)
 	if err != nil{
 		restErr:= errors.NewNotFoundError("No such GroupID")
@@ -72,32 +70,19 @@ func (ctrl *DownloadController)GetFileID(c *gin.Context) {
 
 func (ctrl *DownloadController) ServeFiles(c *gin.Context) {
 	hash:=c.Param("hash")
-	n,_:=strconv.Atoi(c.Param("n"))
-	k,err:=ctrl.DownloadService.ServeFile(hash,n)
-	if err!=nil{
-		restErr:= errors.NewNotFoundError("No such GroupID")
-		c.JSON(restErr.Status, restErr)
-		return
+	uID:=c.Param("uID")
+	grpID:=c.Param("grpID")
+	s,ok:=models.SchedulerArray[grpID]
+	if ok {
+		n := s.Allocate(uID)
+
+		k, err := ctrl.DownloadService.ServeFile(hash, n)
+		if err != nil {
+			restErr := errors.NewNotFoundError("No such GroupID")
+			c.JSON(restErr.Status, restErr)
+			return
+		}
+		c.JSON(http.StatusOK, k)
 	}
-	c.JSON(http.StatusOK,k)
+	c.String(http.StatusOK,"error")
 }
-
-//func Echo(ws *websocket.Conn) {
-//
-//	helpers.DownloadFile()
-//	for {
-//		if err := websocket.JSON.Send(ws, info); err != nil {
-//			fmt.Println("Error sending message")
-//			break
-//		}
-//		// if BytesTransferred == 100 break
-//	}
-//}
-
-
-//func (ctrl *DownloadController)DisplayStatus(c *gin.Context){
-//	handler := websocket.Handler(Echo)
-//	handler.ServeHTTP(c.Writer, c.Request)
-//}
-
-

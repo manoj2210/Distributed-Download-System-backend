@@ -46,10 +46,6 @@ func (d *DownloadService) FindDownloadableFile(s string) (*models.DownloadableFi
 
 func (d *DownloadService) AddNewDownloadableFile(grpId string,df *models.DownloadableFileDescription)error{
 	collection:=d.repo.Database("ddsdb").Collection("downloadTable")
-	//o,err:=primitive.ObjectIDFromHex(grpId)
-	//if err!= nil{
-	//	return err
-	//}
 	_ ,er:=collection.InsertOne(context.TODO(),bson.M{"grpID":grpId,"data":df})
 	if er!=nil{
 		return er
@@ -57,13 +53,6 @@ func (d *DownloadService) AddNewDownloadableFile(grpId string,df *models.Downloa
 	return nil
 }
 
-//func (d *DownloadService)UpdateStatus(grpID string,s string){
-//	m,ok:=DownloadTable[grpID]
-//	if ok {
-//		m.Status = s
-//	}
-//}
-//
 func (d *DownloadService) GetDownloadableFile(grpID string)(bson.M,error){
 	collection:=d.repo.Database("ddsdb").Collection("downloadTable")
 	m:= bson.M{}

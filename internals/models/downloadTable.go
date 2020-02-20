@@ -2,7 +2,6 @@ package models
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 	"time"
 )
@@ -25,14 +24,6 @@ func UpdateStatus(grpID string,s string)error{
 	  }
 	  return errors.New("Data Not available")
 }
-//func UpdateStatus(grpID string,s string,d *mongo.Client)error{
-//	collection:=d.Database("ddsdb").Collection("downloadTable")
-//	_,err:=collection.UpdateOne(context.TODO(),bson.M{"grpID":grpID},bson.M{"$set": bson.M{"status":s}})
-//	if err!=nil{
-//		return err
-//	}
-//	return nil
-//}
 
 func NewDownloadableFileDescription(p string)*DownloadableFileDescription{
 	return &DownloadableFileDescription{p,time.Now(),&WriteCounter{},"Downloading"}
@@ -58,7 +49,6 @@ func AddNewDownloadableFile(grpId string,df *DownloadableFileDescription)error{
 		}
 	}
 	DownloadTable[grpId]=df
-	fmt.Println("file",DownloadTable[grpId])
 	return nil
 }
 

@@ -16,7 +16,7 @@ func mapUrls(appConfig *config.AppConfig) {
 
 	router.POST("/download", downloadController.Download)
 	router.GET("/download/description/:grpID",downloadController.DownloadTableDetails)
-	router.GET("/serve/:hash/:n",downloadController.ServeFiles)
+	router.GET("/serve/:hash/:grpID/:uID",downloadController.ServeFiles)
 	router.GET("/getFileID/:grpID",downloadController.GetFileID)
 
 
