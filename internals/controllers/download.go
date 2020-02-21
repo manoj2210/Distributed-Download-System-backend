@@ -83,16 +83,11 @@ func (ctrl *DownloadController) ServeFiles(c *gin.Context) {
 				return
 			}
 			c.JSON(http.StatusOK, k)
+		}else{
+			restErr := errors.NewNotFoundError("No Data")
+			c.JSON(restErr.Status, restErr)
+			return
 		}
-		else{
-			if err != nil {
-				restErr := errors.NewNotFoundError("No Data")
-				c.JSON(restErr.Status, restErr)
-				return
-			}
-			c.JSON(http.StatusOK, k)
-		}
-		
 	}
 	c.String(http.StatusOK,"error")
 }
