@@ -1,5 +1,9 @@
 package models
 
+import(
+	"errors"
+)
+
 var SchedulerArray=make(map[string]*Scheduler)
 
 type Scheduler struct {
@@ -24,6 +28,11 @@ func (s *Scheduler)Allocate(uID string) int{
 	return -1
 }
 
-func DisplayArray(grpID string)*Scheduler{
-	return SchedulerArray[grpID]
+func DisplayArray(grpID string)(*Scheduler,error){
+	k,ok:=SchedulerArray[grpID]
+	if ok{
+		return k,nil
+	}
+	return nil,errors.New("No such Data Available")
+
 }
