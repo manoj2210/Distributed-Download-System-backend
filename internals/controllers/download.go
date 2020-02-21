@@ -75,14 +75,24 @@ func (ctrl *DownloadController) ServeFiles(c *gin.Context) {
 	s,ok:=models.SchedulerArray[grpID]
 	if ok {
 		n := s.Allocate(uID)
-
-		k, err := ctrl.DownloadService.ServeFile(hash, n)
-		if err != nil {
-			restErr := errors.NewNotFoundError("No such GroupID")
-			c.JSON(restErr.Status, restErr)
-			return
+		if n!=-1{
+			k, err := ctrl.DownloadService.ServeFile(hash, n)
+			if err != nil {
+				restErr := errors.NewNotFoundError("No such GroupID")
+				c.JSON(restErr.Status, restErr)
+				return
+			}
+			c.JSON(http.StatusOK, k)
 		}
-		c.JSON(http.StatusOK, k)
+		else{
+			if err != nil {
+				restErr := errors.NewNotFoundError("No Data")
+				c.JSON(restErr.Status, restErr)
+				return
+			}
+			c.JSON(http.StatusOK, k)
+		}
+		
 	}
 	c.String(http.StatusOK,"error")
 }
