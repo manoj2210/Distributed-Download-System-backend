@@ -38,7 +38,7 @@ type WriteCounter struct {
 func (wc *WriteCounter) Write(p []byte) (int, error) {
 	n := len(p)
 	wc.Total += n
-	wc.Percent=strconv.Itoa(wc.Total/wc.L)
+	wc.Percent=strconv.Itoa(int((wc.Total/wc.L)*100))
 	return n, nil
 }
 

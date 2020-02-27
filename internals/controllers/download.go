@@ -8,6 +8,8 @@ import (
 	"github.com/manoj2210/distributed-download-system-backend/internals/models"
 	"github.com/manoj2210/distributed-download-system-backend/internals/services"
 	"net/http"
+	"fmt"
+//	"bytes"
 )
 
 type DownloadController struct{
@@ -72,22 +74,34 @@ func (ctrl *DownloadController) ServeFiles(c *gin.Context) {
 	hash:=c.Param("hash")
 	uID:=c.Param("uID")
 	grpID:=c.Param("grpID")
-	s,ok:=models.SchedulerArray[grpID]
+	_,ok:=models.SchedulerArray[grpID]
+//	fmt.Println("yes")
 	if ok {
-		n := s.Allocate(uID)
+//		fmt.Println("ok")
+		n := models.SchedulerArray[grpID].Allocate(uID)
+		fmt.Println(models.SchedulerArray[grpID])
 		if n!=-1{
 			k, err := ctrl.DownloadService.ServeFile(hash, n)
+//Change in serve files itself
+//https://stackoverflow.com/questions/59507580/how-to-store-byte-as-binary-in-mongodb-using-go-mongo-driver
+			l:=k["data"].(bytes)
+			fmt.Println(l)
 			if err != nil {
 				restErr := errors.NewNotFoundError("No such GroupID")
 				c.JSON(restErr.Status, restErr)
 				return
 			}
-			c.JSON(http.StatusOK, k)
+			//c.JSON(http.StatusOK, k)
+			c.String(http.StatusOK,"k")
+			return
 		}else{
 			restErr := errors.NewNotFoundError("No Data")
 			c.JSON(restErr.Status, restErr)
 			return
 		}
 	}
-	c.String(http.StatusOK,"error")
+	restErr := errors.NewNotFoundError("No Data")
+	c.JSON(restErr.Status, restErr)
+	return
 }
+

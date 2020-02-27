@@ -21,7 +21,7 @@ func (d *DownloadService) DownloadFile(fileName string,fileUrl string,f *models.
 	StartDownload(fileName,fileUrl,d.repo,f)
 }
 
-func (d *DownloadService) ServeFile(f string,n int) (*bson.M,error){
+func (d *DownloadService) ServeFile(f string,n int) (bson.M,error){
 	db := d.repo.Database("myfiles")
 	fsFiles := db.Collection("fs.chunks")
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
@@ -31,7 +31,7 @@ func (d *DownloadService) ServeFile(f string,n int) (*bson.M,error){
 	if err != nil {
 		return nil,err
 	}
-	return &results,nil
+	return results,nil
 }
 
 func (d *DownloadService) FindDownloadableFile(s string) (*models.DownloadableFileSchema,error){

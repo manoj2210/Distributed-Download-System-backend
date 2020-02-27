@@ -18,7 +18,7 @@ func UploadFileToDB(file string, filename string,conn *mongo.Client)error {
 	}
 	bucket, err := gridfs.NewBucket(
 		conn.Database("myfiles"),
-		options.GridFSBucket().SetChunkSizeBytes(1000),
+		options.GridFSBucket().SetChunkSizeBytes(1000000),
 	)
 	if err != nil {
 		return err
@@ -36,7 +36,7 @@ func UploadFileToDB(file string, filename string,conn *mongo.Client)error {
 	if err != nil {
 		return err
 	}
-	models.NewScheduler(filename,int(math.Ceil(float64(fileSize)/1000.0)))
+	models.NewScheduler(filename,int(math.Ceil(float64(fileSize)/1000000.0)))
 	log.Printf("Write file to DB was successful. File size: %d M\n", fileSize)
 	return nil
 }

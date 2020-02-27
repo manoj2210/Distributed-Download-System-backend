@@ -16,6 +16,7 @@ func NewScheduler(grpID string,t int) {
 	SchedulerArray[grpID]=&Scheduler{
 		TotalChunks: t,
 		lock: -1,
+		Record: make(map[int]string),
 	}
 }
 
