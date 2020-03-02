@@ -3,9 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/manoj2210/distributed-download-system-backend/internals/app"
+	"github.com/joho/godotenv"
+	"github.com/manoj2210/distributed-download-system-backend/internal/app"
 
-	"github.com/manoj2210/distributed-download-system-backend/internals/config"
+	"github.com/manoj2210/distributed-download-system-backend/internal/config"
 	"log"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -21,6 +22,8 @@ func init() {
 }
 
 func main() {
+
+	godotenv.Load("../.env")
 
 	clientOptions := options.Client().ApplyURI("mongodb://"+appConfig.DBConfig.DBHOST+":"+appConfig.DBConfig.DBPORT)
 	client, err := mongo.Connect(context.TODO(), clientOptions)
