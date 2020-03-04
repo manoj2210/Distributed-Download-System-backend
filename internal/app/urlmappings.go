@@ -18,7 +18,8 @@ func mapUrls(appConfig *config.AppConfig) {
 	{
 		api.POST("/download", downloadController.Download)
 		api.GET("/download/description/:grpID", downloadController.DownloadTableDetails)
-		api.GET("/serve/:grpID/:uID/:file", downloadController.ServeFiles)
+		api.GET("/serve/:grpID/:uID", downloadController.ServeFiles)
+		api.GET("/getScheduler/:grpID",downloadController.GetScheduler)
 	}
 	//router.GET("/getFileID/:grpID",downloadController.GetFileID)
 

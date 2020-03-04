@@ -1,7 +1,5 @@
 package models
 
-//var SchedulerArray=make(map[string]*Scheduler)
-
 type Scheduler struct {
 	Url string `json:"url" bson:"url"`
 	GroupID string `json:"groupID" bson:"groupID"`
@@ -17,45 +15,21 @@ type Record struct{
 }
 
 func NewScheduler(url,grpID string)*Scheduler{
+	var R []Record
+	R=append(R,Record{"none",0,false})
 	return &Scheduler{
 		Url:		 url,
 		GroupID:     grpID,
 		TotalChunks: 0,
-		Data:        nil,
+		Data:        R,
 		Ptr:0,
 	}
 }
 
-func NewRecord(uID string,f int)*Record{
+func NewRecord(uID string,f int64)*Record{
 	return &Record{
 		UserID:       uID,
-		FileNo:       int64(f),
+		FileNo:       f,
 		Acknowledged: false,
 	}
 }
-
-//func (s *Scheduler)Allocate(uID string) int{
-//	if s.lock<int(s.TotalChunks) {
-//		s.lock += 1
-//		s.Record[s.lock] = uID
-//		return s.lock
-//	}
-//	return -1
-//}
-//
-//func NewScheduler(grpID string,t int) {
-//	SchedulerArray[grpID]=&Scheduler{
-//		TotalChunks: int64(t),
-//		lock: -1,
-//		Record: make(map[int]string),
-//	}
-//}
-//
-//func DisplayArray(grpID string)(*Scheduler,error){
-//	k,ok:=SchedulerArray[grpID]
-//	if ok{
-//		return k,nil
-//	}
-//	return nil,errors.New("No such Data Available")
-//
-//}

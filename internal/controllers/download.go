@@ -7,10 +7,9 @@ import (
 	"github.com/manoj2210/distributed-download-system-backend/internal/helpers"
 	"github.com/manoj2210/distributed-download-system-backend/internal/models"
 	"github.com/manoj2210/distributed-download-system-backend/internal/services"
+	"log"
 	"net/http"
 	"strconv"
-
-	//	"bytes"
 )
 
 type DownloadController struct{
@@ -67,60 +66,42 @@ func (ctrl *DownloadController)DownloadTableDetails(c *gin.Context) {
 	c.JSON(http.StatusOK,m)
 }
 
-//func (ctrl *DownloadController)GetFileID(c *gin.Context) {
-//	grpID:=c.Param("grpID")
-//	o,er:=ctrl.DownloadService.FindDownloadableFile(grpID)
-//	if er != nil{
-//		restErr:= errors.NewNotFoundError("No such file")
-//		c.JSON(restErr.Status, restErr)
-//		return
-//	}
-//	c.JSON(http.StatusOK,o)
-//}
-
 func (ctrl *DownloadController) ServeFiles(c *gin.Context) {
-	//hash:=c.Param("hash")
 	uID:=c.Param("uID")
 	grpID:=c.Param("grpID")
-	file:=c.Param("file")
-	//_,ok:=models.SchedulerArray[grpID]
-	//if ok {
-	//	n := models.SchedulerArray[grpID].Allocate(uID)
-	//	fmt.Println(models.SchedulerArray[grpID])
-	//	if n!=-1{
-	//
-	//	}else{
-	//		restErr := errors.NewNotFoundError("No Data")
-	//		c.JSON(restErr.Status, restErr)
-	//		return
-	//	}
-	//}
-	m:=grpID+":"+file
-	l,_:=strconv.Atoi(file)
-	r:=models.NewRecord(uID,l)
+	//file:=c.Param("file")
+	var file int64
+	s,_:=ctrl.DownloadService.GetScheduler(grpID)
+	if s.Ptr+1==s.TotalChunks{
+		restErr := errors.NewNotFoundError("All data scheduled")
+		c.JSON(restErr.Status, restErr)
+		return
+	} else{
+		file=s.Ptr
+		err:=ctrl.DownloadService.UpdatePtrScheduler(grpID,file+1)
+		if err != nil {
+			restErr := errors.NewNotFoundError("All data scheduled")
+			c.JSON(restErr.Status, restErr)
+			return
+		}
+	}
+	r:=models.NewRecord(uID,file)
 	err:= ctrl.DownloadService.UpdateScheduler(grpID,r)
 	if err != nil {
-		restErr := errors.NewNotFoundError("No such GroupID")
+		log.Println(err)
+		restErr := errors.NewNotFoundError("No such GroupID1")
 		c.JSON(restErr.Status, restErr)
 		return
 	}
+	m:=grpID+":"+strconv.Itoa(int(file))
 	k, err := ctrl.DownloadService.ServeFile(m)
 	if err != nil {
-		restErr := errors.NewNotFoundError("No such GroupID")
+		restErr := errors.NewNotFoundError("No such GroupID2")
 		c.JSON(restErr.Status, restErr)
 		return
 	}
-
-	//l:=bytes.NewReader(k.Bytes())
-	//extraHeaders := map[string]string{
-	//	"Content-Disposition": `attachment; filename="gopher.png"`,
-	//}
-	//c.DataFromReader(http.StatusOK,1000000,"application/octet-stream",l,extraHeaders)
+	//c.Header("Con")
 	c.Writer.Write(k.Bytes())
-	return
-
-	restErr := errors.NewNotFoundError("No Data")
-	c.JSON(restErr.Status, restErr)
 	return
 }
 

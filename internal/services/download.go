@@ -24,15 +24,6 @@ func (d *DownloadService) DownloadFile(f *models.DownloadableFileDescription){
 
 func (d *DownloadService) ServeFile(f string) (*bytes.Buffer,error){
 	db := d.repo.Database("myfiles")
-	//fsFiles := db.Collection("fs.chunks")
-	//ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	//var results bson.M
-	//l,err:=primitive.ObjectIDFromHex(f)
-	//err = fsFiles.FindOne(ctx, bson.M{"n":n,"files_id":l}).Decode(&results)
-	//if err != nil {
-	//	return nil,err
-	//}
-	//return results,nil
 	bucket, _ := gridfs.NewBucket(
 		db,
 	)
@@ -135,4 +126,14 @@ func (d *DownloadService) GetScheduler(grpID string)(*models.Scheduler,error){
 		return nil,err
 	}
 	return &r,nil
+}
+
+func (d *DownloadService) UpdatePtrScheduler(grpID string,i int64)error{
+	collection:=d.repo.Database("ddsdb").Collection("scheduler")
+	u:=bson.M{"$set": bson.M{"ptr":i}}
+	_,err:=collection.UpdateOne(context.TODO(),bson.M{"groupID":grpID},u)
+	if err!=nil{
+		return err
+	}
+	return nil
 }

@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"github.com/manoj2210/distributed-download-system-backend/internal/models"
 	"io"
 	"log"
@@ -45,7 +46,7 @@ func StartDownload(d *DownloadService,file *models.DownloadableFileDescription) 
 	if err != nil {
 		log.Println(err)
 		os.Remove(filepath+ ".tmp")
-		d.UpdateStatus(fileName,"Error")
+		d.UpdateStatus(fileName,"Error from Download")
 		return
 	}
 
@@ -65,23 +66,21 @@ func StartDownload(d *DownloadService,file *models.DownloadableFileDescription) 
 	d.UpdateStatus(fileName,"Splitting")
 
 	out,err:=exec.Command("split","-b","1m",filepath,"downloads/"+fileName+"/").Output()
-	//fmt.Println(out)
+	fmt.Println(out)
 	if err !=nil{
 		log.Println(err)
 	}
-
 	out,err=exec.Command("rm",filepath).Output()
 	//fmt.Println(out)
 	if err !=nil{
 		log.Println(err)
 	}
-
 	out,err=exec.Command("ls","-S","downloads/"+fileName).Output()
 	str:=string(out)
 
 	strings.ReplaceAll(str," ","")
 	g:=strings.Split(str,"\n")
-	//fmt.Println(g)
+	fmt.Println(g)
 	if err !=nil{
 		log.Println(err)
 	}
