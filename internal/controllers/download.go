@@ -8,6 +8,8 @@ import (
 	"github.com/manoj2210/distributed-download-system-backend/internal/models"
 	"github.com/manoj2210/distributed-download-system-backend/internal/services"
 	"net/http"
+	"strconv"
+
 	//	"bytes"
 )
 
@@ -32,14 +34,21 @@ func (ctrl *DownloadController)Download(c *gin.Context) {
 		return
 	}
 
-	f:=models.NewDownloadableFileDescription(post.Url,post.GroupID)
-	er:=ctrl.DownloadService.AddNewDownloadableFile(f)
+	s:=models.NewScheduler(post.Url,post.GroupID)
+	er:=ctrl.DownloadService.AddNewScheduler(s)
 	if er!=nil{
-		restErr:= errors.NewBadRequestError("Unable to Add a New Group")
+		restErr:= errors.NewBadRequestError("Unable to Add a New Scheduler")
 		c.JSON(restErr.Status, restErr)
 		return
 	}
 
+	f:=models.NewDownloadableFileDescription(post.Url,post.GroupID)
+	er=ctrl.DownloadService.AddNewDownloadableFile(f)
+	if er!=nil{
+		restErr:= errors.NewBadRequestError("Unable to Add a New Group ")
+		c.JSON(restErr.Status, restErr)
+		return
+	}
 	c.JSON(http.StatusCreated, helpers.DownloadSuccess())
 
 	//Create a downloading queue table and set the writeCounter then access with websocket
@@ -73,6 +82,7 @@ func (ctrl *DownloadController) ServeFiles(c *gin.Context) {
 	//hash:=c.Param("hash")
 	uID:=c.Param("uID")
 	grpID:=c.Param("grpID")
+	file:=c.Param("file")
 	//_,ok:=models.SchedulerArray[grpID]
 	//if ok {
 	//	n := models.SchedulerArray[grpID].Allocate(uID)
@@ -85,13 +95,22 @@ func (ctrl *DownloadController) ServeFiles(c *gin.Context) {
 	//		return
 	//	}
 	//}
-	m:=grpID+":"+uID
+	m:=grpID+":"+file
+	l,_:=strconv.Atoi(file)
+	r:=models.NewRecord(uID,l)
+	err:= ctrl.DownloadService.UpdateScheduler(grpID,r)
+	if err != nil {
+		restErr := errors.NewNotFoundError("No such GroupID")
+		c.JSON(restErr.Status, restErr)
+		return
+	}
 	k, err := ctrl.DownloadService.ServeFile(m)
 	if err != nil {
 		restErr := errors.NewNotFoundError("No such GroupID")
 		c.JSON(restErr.Status, restErr)
 		return
 	}
+
 	//l:=bytes.NewReader(k.Bytes())
 	//extraHeaders := map[string]string{
 	//	"Content-Disposition": `attachment; filename="gopher.png"`,
@@ -105,3 +124,13 @@ func (ctrl *DownloadController) ServeFiles(c *gin.Context) {
 	return
 }
 
+func (ctrl *DownloadController) GetScheduler(c *gin.Context){
+	grpID:=c.Param("grpID")
+	m,err:=ctrl.DownloadService.GetScheduler(grpID)
+	if err != nil{
+		restErr:= errors.NewNotFoundError("No Data available with that groupID")
+		c.JSON(restErr.Status, restErr)
+		return
+	}
+	c.JSON(http.StatusOK,m)
+}

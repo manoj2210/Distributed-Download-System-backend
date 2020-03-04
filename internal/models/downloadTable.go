@@ -1,7 +1,6 @@
 package models
 
 import (
-	"strconv"
 	"time"
 )
 
@@ -12,7 +11,7 @@ type DownloadableFileDescription struct {
 	GroupId string `json:"groupID" bson:"groupID"`
 	Url string    `json:"url" bson:"url""`
 	Time time.Time  `json:"time" bson:"time""`
-	Counter *WriteCounter  `json:"counter" bson:"counter""`
+	Size int64  `json:"size" bson:"size""`
 	Status string    `json:"status" bson:"status"`
 
 }
@@ -26,21 +25,21 @@ type DownloadableFileDescription struct {
 //}
 
 func NewDownloadableFileDescription(u,g string)*DownloadableFileDescription{
-	return &DownloadableFileDescription{g,u,time.Now(),&WriteCounter{},"Downloading"}
+	return &DownloadableFileDescription{g,u,time.Now(),0,"Downloading"}
 }
 
-type WriteCounter struct {
-	Total int
-	L int
-	Percent string
-}
+//type WriteCounter struct {
+//	Total int  `json:"total" bson:"total"`
+//	L int      `json:"size" bson:"size"`
+//	Percent string ``
+//}
 
-func (wc *WriteCounter) Write(p []byte) (int, error) {
-	n := len(p)
-	wc.Total += n
-	wc.Percent=strconv.Itoa(int(float64(wc.Total/wc.L)*100))
-	return n, nil
-}
+//func (wc *WriteCounter) Write(p []byte) (int, error) {
+//	n := len(p)
+//	wc.Total += n
+//	wc.Percent=strconv.Itoa(int(float64(wc.Total/wc.L)*100))
+//	return n, nil
+//}
 
 //func AddNewDownloadableFile(grpId string,df *DownloadableFileDescription)error{
 //	for key,value := range DownloadTable{

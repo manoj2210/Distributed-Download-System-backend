@@ -1,7 +1,6 @@
 package services
 
 import (
-	"fmt"
 	"github.com/manoj2210/distributed-download-system-backend/internal/models"
 	"io"
 	"log"
@@ -12,7 +11,7 @@ import (
 	"strings"
 )
 
-func DownloadFile(filepath string, url string,counter *models.WriteCounter) error {
+func DownloadFile(filepath string, url string) error {
 
 	out, err := os.Create(filepath + ".tmp")
 	if err != nil {
@@ -25,12 +24,7 @@ func DownloadFile(filepath string, url string,counter *models.WriteCounter) erro
 	}
 	defer resp.Body.Close()
 
-	counter.L,_=strconv.Atoi(resp.Header.Get("Content-Length"))
-	if counter.L==0{
-		counter.L=1
-	}
-
-	if _, err = io.Copy(out, io.TeeReader(resp.Body, counter)); err != nil {
+	if _, err = io.Copy(out, resp.Body); err != nil {
 		out.Close()
 		return err
 	}
@@ -47,7 +41,7 @@ func StartDownload(d *DownloadService,file *models.DownloadableFileDescription) 
 
 	_=os.Mkdir("downloads/"+fileName,os.ModePerm)
 	filepath:="downloads/"+fileName+"/"+fileName
-	err := DownloadFile(filepath, fileUrl,file.Counter)
+	err := DownloadFile(filepath, fileUrl)
 	if err != nil {
 		log.Println(err)
 		os.Remove(filepath+ ".tmp")
@@ -61,17 +55,23 @@ func StartDownload(d *DownloadService,file *models.DownloadableFileDescription) 
 	}
 	size := fi.Size()
 
-	file.Counter.L=int(size)
+	file.Size=size
+
+	err=d.UpdateSize(file.GroupId,size)
+	if err!=nil{
+		log.Fatal(err)
+	}
+
 	d.UpdateStatus(fileName,"Splitting")
 
-	out,err:=exec.Command("split","-b","1m",filepath).Output()
-	fmt.Println(out)
+	out,err:=exec.Command("split","-b","1m",filepath,"downloads/"+fileName+"/").Output()
+	//fmt.Println(out)
 	if err !=nil{
 		log.Println(err)
 	}
 
 	out,err=exec.Command("rm",filepath).Output()
-	fmt.Println(out)
+	//fmt.Println(out)
 	if err !=nil{
 		log.Println(err)
 	}
@@ -82,10 +82,15 @@ func StartDownload(d *DownloadService,file *models.DownloadableFileDescription) 
 	strings.ReplaceAll(str," ","")
 	g:=strings.Split(str,"\n")
 	//fmt.Println(g)
-
 	if err !=nil{
 		log.Println(err)
 	}
+
+	err=d.UpdateNoFiles(file.GroupId,len(g))
+	if err !=nil{
+		log.Println(err)
+	}
+
 
 	d.UpdateStatus(fileName,"Uploading")
 	for idx,itm := range g{

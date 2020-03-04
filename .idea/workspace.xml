@@ -2,25 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="82bad400-db78-4548-9b71-3671f8c1251c" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.env" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/downloads/123121/123121" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internals/app/app.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/app/app.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internals/app/urlmappings.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/app/urlmappings.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internals/config/configurations.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/config/configurations.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internals/controllers/download.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/controllers/download.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internals/errors/errors.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/errors/errors.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internals/helpers/download.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/helpers/download.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internals/models/download.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/models/download.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internals/models/downloadTable.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/models/downloadTable.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internals/models/scheduler.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/models/scheduler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internals/services/download.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/download.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internals/services/filedownload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/filedownload.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internals/services/uploadNdownload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/uploadNdownload.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/app/urlmappings.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/app/urlmappings.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/controllers/download.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/controllers/download.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/models/downloadTable.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/models/downloadTable.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/models/scheduler.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/models/scheduler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/services/download.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/download.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/services/filedownload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/filedownload.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/services/uploadNdownload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/uploadNdownload.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,8 +78,19 @@
     <option name="viewStates">
       <list>
         <serviceView>
+          <option name="contentProportion" value="0.12636961" />
           <treeState>
-            <expand />
+            <expand>
+              <path>
+                <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
+                <item name="root:@localhost" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+              </path>
+              <path>
+                <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
+                <item name="root:@localhost" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+                <item name="com.intellij.database.console.session.MessageBusSession@1390b3cd" type="9fbbdea:ServiceModel$ServiceNode" />
+              </path>
+            </expand>
             <select />
           </treeState>
         </serviceView>
@@ -108,34 +108,34 @@
     <proxy>direct</proxy>
   </component>
   <component name="WindowStateProjectService">
-    <state x="320" y="115" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1583066838953">
+    <state x="320" y="115" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1583239994631">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="320" y="115" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1440.900@0.0.1440.900" timestamp="1583066838953" />
-    <state x="440" y="260" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1583142297486">
+    <state x="320" y="115" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1440.900@0.0.1440.900" timestamp="1583239994631" />
+    <state x="440" y="260" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1583241922767">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="440" y="260" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1440.900@0.0.1440.900" timestamp="1583142297486" />
+    <state x="440" y="260" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1440.900@0.0.1440.900" timestamp="1583241922767" />
     <state x="499" y="166" key="#com.intellij.ide.util.MemberChooser" timestamp="1582225041301">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="499" y="166" key="#com.intellij.ide.util.MemberChooser/0.0.1440.900@0.0.1440.900" timestamp="1582225041301" />
-    <state width="958" height="245" key="GridCell.Tab.0.bottom" timestamp="1583141515424">
+    <state width="1195" height="437" key="GridCell.Tab.0.bottom" timestamp="1583322358424">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="958" height="245" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1583141515424" />
-    <state width="958" height="245" key="GridCell.Tab.0.center" timestamp="1583141515422">
+    <state width="1195" height="437" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1583322358424" />
+    <state width="1195" height="437" key="GridCell.Tab.0.center" timestamp="1583322358423">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="958" height="245" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1583141515422" />
-    <state width="958" height="245" key="GridCell.Tab.0.left" timestamp="1583141515421">
+    <state width="1195" height="437" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1583322358423" />
+    <state width="1195" height="437" key="GridCell.Tab.0.left" timestamp="1583322358422">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="958" height="245" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1583141515421" />
-    <state width="958" height="245" key="GridCell.Tab.0.right" timestamp="1583141515423">
+    <state width="1195" height="437" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1583322358422" />
+    <state width="1195" height="437" key="GridCell.Tab.0.right" timestamp="1583322358424">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="958" height="245" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1583141515423" />
+    <state width="1195" height="437" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1583322358424" />
     <state x="385" y="196" width="670" height="676" key="search.everywhere.popup" timestamp="1583140013537">
       <screen x="0" y="0" width="1440" height="900" />
     </state>

@@ -14,9 +14,12 @@ func mapUrls(appConfig *config.AppConfig) {
 
 	downloadController:=controllers.NewDownloadController(appConfig)
 
-	router.POST("/download", downloadController.Download)
-	router.GET("/download/description/:grpID",downloadController.DownloadTableDetails)
-	router.GET("/serve/:hash/:grpID/:uID",downloadController.ServeFiles)
+	api := router.Group(appConfig.Server.NAME)
+	{
+		api.POST("/download", downloadController.Download)
+		api.GET("/download/description/:grpID", downloadController.DownloadTableDetails)
+		api.GET("/serve/:grpID/:uID/:file", downloadController.ServeFiles)
+	}
 	//router.GET("/getFileID/:grpID",downloadController.GetFileID)
 
 
