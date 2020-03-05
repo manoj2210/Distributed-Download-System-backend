@@ -69,16 +69,31 @@ func (ctrl *DownloadController)DownloadTableDetails(c *gin.Context) {
 func (ctrl *DownloadController) ServeFiles(c *gin.Context) {
 	uID:=c.Param("uID")
 	grpID:=c.Param("grpID")
-	//file:=c.Param("file")
+
+	//Scheduler Part 
 	var file int64
-	s,_:=ctrl.DownloadService.GetScheduler(grpID)
-	if s.Ptr+1==s.TotalChunks{
-		restErr := errors.NewNotFoundError("All data scheduled")
+	s,err:=ctrl.DownloadService.GetScheduler(grpID)
+	if err != nil {
+		restErr := errors.NewNotFoundError("No such GroupID0")
 		c.JSON(restErr.Status, restErr)
 		return
+	}
+	if s.Ptr+1==s.TotalChunks{
+		f,err:=CheckSchedulerForHoles(grpID)
+		if err!=nil{
+			restErr := errors.NewNotFoundError("No such GroupID0")
+			c.JSON(restErr.Status, restErr)
+			return
+		}
+		if f==-1{	
+			restErr := errors.NewNotFoundError("All data scheduled")
+			c.JSON(restErr.Status, restErr)
+			return
+		}
+		file=f
 	} else{
 		file=s.Ptr
-		err:=ctrl.DownloadService.UpdatePtrScheduler(grpID,file+1)
+		err=ctrl.DownloadService.UpdatePtrScheduler(grpID,file+1)
 		if err != nil {
 			restErr := errors.NewNotFoundError("All data scheduled")
 			c.JSON(restErr.Status, restErr)
@@ -86,7 +101,7 @@ func (ctrl *DownloadController) ServeFiles(c *gin.Context) {
 		}
 	}
 	r:=models.NewRecord(uID,file)
-	err:= ctrl.DownloadService.UpdateScheduler(grpID,r)
+	err= ctrl.DownloadService.UpdateScheduler(grpID,r)
 	if err != nil {
 		log.Println(err)
 		restErr := errors.NewNotFoundError("No such GroupID1")
@@ -114,4 +129,17 @@ func (ctrl *DownloadController) GetScheduler(c *gin.Context){
 		return
 	}
 	c.JSON(http.StatusOK,m)
+}
+
+func (ctrl *DownloadController) Acknowledge(c *gin.Context){
+	grpID:=c.Param("grpID")
+	uID:=c.Param("uID")
+	f:=c.Param("file")
+	err:=ctrl.DownloadService.AcknowledgeScheduler(f,grpID,uID)
+	if err!=nil{
+		restErr:= errors.NewNotFoundError("No Data available with that groupID")
+		c.JSON(restErr.Status, restErr)
+		return
+	}
+	c.String(http.StatusOK,"Success")
 }

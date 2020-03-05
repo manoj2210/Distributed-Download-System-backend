@@ -137,3 +137,26 @@ func (d *DownloadService) UpdatePtrScheduler(grpID string,i int64)error{
 	}
 	return nil
 }
+
+func (d *DownloadService) CheckSchedulerForHoles(grpID string)(int64,error){
+	s,err:=ctrl.DownloadService.GetScheduler(grpID)
+	if err!=nil{
+		return -1,err
+	}
+	for idx,x := range s{
+		if !x.Acknowledged{
+			return x.FileNo,nil
+		} 
+	} 
+	return -1,err
+}
+
+func (d *DownloadService) AcknowledgeScheduler(f int64,grpID,uID string)(error){
+	collection:=d.repo.Database("ddsdb").Collection("scheduler")
+	u:=bson.M{"$set": bson.M{"data.$.ack":1}}
+	_,err:=collection.UpdateOne(context.TODO(),bson.M{"groupID":grpID,"data.fileNo"},u)
+	if err!=nil{
+		return err
+	}
+	return nil
+}

@@ -20,6 +20,7 @@ func mapUrls(appConfig *config.AppConfig) {
 		api.GET("/download/description/:grpID", downloadController.DownloadTableDetails)
 		api.GET("/serve/:grpID/:uID", downloadController.ServeFiles)
 		api.GET("/getScheduler/:grpID",downloadController.GetScheduler)
+		api.GET("/acknowledge/:grpID/:uID/:file",downloadController.Acknowledge)
 	}
 	//router.GET("/getFileID/:grpID",downloadController.GetFileID)
 
