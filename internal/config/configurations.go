@@ -52,7 +52,7 @@ func NewConfig() *AppConfig {
 
 	return &AppConfig{
 		Server: serverConfig{
-			PORT:    getEnvAsInt("APIPORT", 8080),
+			PORT:    getEnvAsInt("APIPORT", 80),
 			NAME:    getEnv("APINAME", "dds/v1"),
 			PROFILE: getEnv("PROFILE", "dev"),
 		},

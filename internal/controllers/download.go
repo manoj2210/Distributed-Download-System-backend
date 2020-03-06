@@ -79,7 +79,7 @@ func (ctrl *DownloadController) ServeFiles(c *gin.Context) {
 		return
 	}
 	if s.Ptr+1==s.TotalChunks{
-		f,err:=CheckSchedulerForHoles(grpID)
+		f,err:=ctrl.DownloadService.CheckSchedulerForHoles(grpID)
 		if err!=nil{
 			restErr := errors.NewNotFoundError("No such GroupID0")
 			c.JSON(restErr.Status, restErr)
@@ -135,7 +135,8 @@ func (ctrl *DownloadController) Acknowledge(c *gin.Context){
 	grpID:=c.Param("grpID")
 	uID:=c.Param("uID")
 	f:=c.Param("file")
-	err:=ctrl.DownloadService.AcknowledgeScheduler(f,grpID,uID)
+	i, err := strconv.Atoi(f)
+	err=ctrl.DownloadService.AcknowledgeScheduler(int64(i),grpID,uID)
 	if err!=nil{
 		restErr:= errors.NewNotFoundError("No Data available with that groupID")
 		c.JSON(restErr.Status, restErr)
