@@ -7,8 +7,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/gridfs"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
-	"strconv"
 )
 
 type DownloadService struct{
@@ -154,9 +154,16 @@ func (d *DownloadService) CheckSchedulerForHoles(grpID string)(int64,error){
 
 func (d *DownloadService) AcknowledgeScheduler(f int64,grpID,uID string)(error){
 	collection:=d.repo.Database("ddsdb").Collection("scheduler")
-	u:=bson.M{"$set": bson.M{"data.$.ack":1}}
-	m:=strconv.Itoa(int(f))
-	_,err:=collection.UpdateOne(context.TODO(),bson.M{"groupID":grpID,"data.fileNo":m},u)
+	update:=bson.M{"$set": bson.M{
+		"data.$.ack":true,
+	}}
+	opts := options.FindOneAndUpdate().SetUpsert(true)
+	filter:= bson.M{
+		"groupID": grpID,
+		"data.fileNo": f,
+	}
+	var updatedDocument bson.M
+	err:=collection.FindOneAndUpdate(context.TODO(), filter, update, opts).Decode(&updatedDocument)
 	if err!=nil{
 		return err
 	}
