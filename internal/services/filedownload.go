@@ -97,5 +97,10 @@ func StartDownload(d *DownloadService,file *models.DownloadableFileDescription) 
 	}
 
 	d.UpdateStatus(fileName,"Uploaded")
+	err=os.RemoveAll("downloads/"+fileName+"/")
+	if err !=nil{
+		log.Println(err)
+	}
+
 }
 
