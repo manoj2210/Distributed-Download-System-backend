@@ -19,13 +19,10 @@ func mapUrls(appConfig *config.AppConfig) {
 		api.POST("/download", downloadController.Download)
 		api.GET("/download/description/:grpID", downloadController.DownloadTableDetails)
 		api.GET("/serve/:grpID/:uID", downloadController.ServeFiles)
+		api.GET("/ackAndServe/:grpID/:uID/:file", downloadController.AckAndServe)
 		api.GET("/getScheduler/:grpID",downloadController.GetScheduler)
-		api.GET("/acknowledge/:grpID/:uID/:file",downloadController.Acknowledge)
+		api.PUT("/acknowledge/:grpID/:uID/:file",downloadController.Acknowledge)
+		api.DELETE("/delete/:grpID",downloadController.Delete)
 	}
-	//router.GET("/getFileID/:grpID",downloadController.GetFileID)
-
-
-
-	//router.GET("/ws",downloadController.DisplayStatus)
 
 }

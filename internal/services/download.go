@@ -3,11 +3,12 @@ package services
 import (
 	"bytes"
 	"context"
+	"errors"
 	"github.com/manoj2210/distributed-download-system-backend/internal/models"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/gridfs"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 )
 
@@ -35,7 +36,38 @@ func (d *DownloadService) ServeFile(f string) (*bytes.Buffer,error){
 		return nil,err
 	}
 	return &buf,nil
+}
 
+func (d *DownloadService) DeleteFiles(grpID string) error {
+	db := d.repo.Database("myfiles")
+	bucket, _ := gridfs.NewBucket(
+		db,
+	)
+	collection:=d.repo.Database("myfiles").Collection("fs.files")
+	cur,err:= collection.Find(context.TODO(), bson.M{"filename": primitive.Regex{Pattern: grpID, Options: ""}})
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	defer cur.Close(context.TODO())
+	for cur.Next(context.TODO()) {
+		var result bson.M
+		err := cur.Decode(&result)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+		err = bucket.Delete(result["_id"])
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+	}
+	if err := cur.Err(); err != nil {
+		log.Println(err)
+		return err
+	}
+	return nil
 }
 
 func (d *DownloadService) FindDownloadableFile(s string) (*models.DownloadableFileSchema,error){
@@ -109,10 +141,10 @@ func (d *DownloadService) AddNewScheduler(s *models.Scheduler)error{
 	return nil
 }
 
-func (d *DownloadService) UpdateScheduler(grpID string,r *models.Record)error{
+func (d *DownloadService) UpdateScheduler(s *models.Scheduler)error{
 	collection:=d.repo.Database("ddsdb").Collection("scheduler")
-	u:=bson.M{"$push": bson.M{"data":r}}
-	_,err:=collection.UpdateOne(context.TODO(),bson.M{"groupID":grpID},u)
+	u:=bson.M{"$set": s}
+	_,err:=collection.UpdateOne(context.TODO(),bson.M{"groupID":s.GroupID},u)
 	if err!=nil{
 		return err
 	}
@@ -139,31 +171,44 @@ func (d *DownloadService) UpdatePtrScheduler(grpID string,i int64)error{
 	return nil
 }
 
-func (d *DownloadService) CheckSchedulerForHoles(grpID string)(int64,error){
-	s,err:=d.GetScheduler(grpID)
-	if err!=nil{
-		return -1,err
-	}
-	for _,x := range s.Data{
-		if !x.Acknowledged{
-			return x.FileNo,nil
+func (d *DownloadService) CheckSchedulerForHoles(s *models.Scheduler) int64 {
+	for idx,_ := range s.Data{
+		if !s.Data[idx].Acknowledged && s.Data[idx].FileNo>0{
+			return s.Data[idx].FileNo
 		} 
 	} 
-	return -1,err
+	return -1
 }
 
-func (d *DownloadService) AcknowledgeScheduler(f int64,grpID,uID string)(error){
+func (d *DownloadService) AcknowledgeScheduler(f int64,grpID,uID string) error {
 	collection:=d.repo.Database("ddsdb").Collection("scheduler")
-	update:=bson.M{"$set": bson.M{
-		"data.$.ack":true,
-	}}
-	opts := options.FindOneAndUpdate().SetUpsert(true)
 	filter:= bson.M{
 		"groupID": grpID,
-		"data.fileNo": f,
 	}
-	var updatedDocument bson.M
-	err:=collection.FindOneAndUpdate(context.TODO(), filter, update, opts).Decode(&updatedDocument)
+	var s *models.Scheduler
+	err:=collection.FindOne(context.TODO(), filter).Decode(&s)
+	if err!=nil{
+		return err
+	}
+	flag:=false
+	for _,x:=range s.Data{
+		if x.UserID==uID && x.FileNo==f {
+			flag=true
+		}
+	}
+	if flag {
+		for idx, _ := range s.Data {
+			if s.Data[idx].UserID == uID && s.Data[idx].FileNo == f {
+				s.Data[idx].Acknowledged = true
+			}
+			if s.Data[idx].UserID != uID && s.Data[idx].FileNo == f {
+				s.Data[idx].FileNo *= -1
+			}
+		}
+	} else {
+		return errors.New("No such data with fileID")
+	}
+	err=d.UpdateScheduler(s)
 	if err!=nil{
 		return err
 	}

@@ -79,12 +79,7 @@ func (ctrl *DownloadController) ServeFiles(c *gin.Context) {
 		return
 	}
 	if s.Ptr+1==s.TotalChunks{
-		f,err:=ctrl.DownloadService.CheckSchedulerForHoles(grpID)
-		if err!=nil{
-			restErr := errors.NewNotFoundError("No such GroupID0")
-			c.JSON(restErr.Status, restErr)
-			return
-		}
+		f:=ctrl.DownloadService.CheckSchedulerForHoles(s)
 		if f==-1{	
 			restErr := errors.NewNotFoundError("All data scheduled")
 			c.JSON(restErr.Status, restErr)
@@ -92,29 +87,99 @@ func (ctrl *DownloadController) ServeFiles(c *gin.Context) {
 		}
 		file=f
 	} else{
+		s.Ptr += 1
 		file=s.Ptr
-		err=ctrl.DownloadService.UpdatePtrScheduler(grpID,file+1)
-		if err != nil {
-			restErr := errors.NewNotFoundError("All data scheduled")
-			c.JSON(restErr.Status, restErr)
-			return
-		}
 	}
 	r:=models.NewRecord(uID,file)
-	err= ctrl.DownloadService.UpdateScheduler(grpID,r)
+	s.Data = append(s.Data, r)
+	err= ctrl.DownloadService.UpdateScheduler(s)
 	if err != nil {
 		log.Println(err)
 		restErr := errors.NewNotFoundError("No such GroupID1")
 		c.JSON(restErr.Status, restErr)
 		return
 	}
-	m:=grpID+":"+strconv.Itoa(int(file))
+	m:=grpID+":"+strconv.Itoa(int(file-1))
 	k, err := ctrl.DownloadService.ServeFile(m)
 	if err != nil {
 		restErr := errors.NewNotFoundError("No such GroupID2")
 		c.JSON(restErr.Status, restErr)
 		return
 	}
+	c.Header("Content-Disposition", "attachment; filename="+m)
+	c.Writer.Write(k.Bytes())
+	return
+}
+
+func (ctrl *DownloadController) AckAndServe(c *gin.Context) {
+	uID:=c.Param("uID")
+	grpID:=c.Param("grpID")
+	i:=c.Param("file")
+	t, err := strconv.Atoi(i)
+	f:=int64(t)
+
+	//Scheduler Part
+	var file int64
+	s,err:=ctrl.DownloadService.GetScheduler(grpID)
+	if err != nil {
+		restErr := errors.NewNotFoundError("No such GroupID0")
+		c.JSON(restErr.Status, restErr)
+		return
+	}
+
+	if(f!=0){
+		//ACK
+		flag:=false
+		for _,x:=range s.Data{
+			if x.UserID==uID && x.FileNo==f {
+				flag=true
+			}
+		}
+		if flag {
+			for idx, _ := range s.Data {
+				if s.Data[idx].UserID == uID && s.Data[idx].FileNo == f {
+					s.Data[idx].Acknowledged = true
+				}
+				if s.Data[idx].UserID != uID && s.Data[idx].FileNo == f {
+					s.Data[idx].FileNo *= -1
+				}
+			}
+		} else {
+			restErr := errors.NewNotFoundError("No such Id with give Group and UID")
+			c.JSON(restErr.Status, restErr)
+			return
+		}
+	}
+
+	if s.Ptr+1==s.TotalChunks{
+		f:=ctrl.DownloadService.CheckSchedulerForHoles(s)
+		if f==-1{
+			restErr := errors.NewNotFoundError("All data scheduled")
+			c.JSON(restErr.Status, restErr)
+			return
+		}
+		file=f
+	} else{
+		s.Ptr += 1
+		file=s.Ptr
+	}
+	r:=models.NewRecord(uID,file)
+	s.Data = append(s.Data, r)
+	err= ctrl.DownloadService.UpdateScheduler(s)
+	if err != nil {
+		log.Println(err)
+		restErr := errors.NewNotFoundError("No such GroupID1")
+		c.JSON(restErr.Status, restErr)
+		return
+	}
+	m:=grpID+":"+strconv.Itoa(int(file-1))
+	k, err := ctrl.DownloadService.ServeFile(m)
+	if err != nil {
+		restErr := errors.NewNotFoundError("No such GroupID2")
+		c.JSON(restErr.Status, restErr)
+		return
+	}
+	m=grpID+":"+strconv.Itoa(int(file))
 	c.Header("Content-Disposition", "attachment; filename="+m)
 	c.Writer.Write(k.Bytes())
 	return
@@ -138,9 +203,20 @@ func (ctrl *DownloadController) Acknowledge(c *gin.Context){
 	i, err := strconv.Atoi(f)
 	err=ctrl.DownloadService.AcknowledgeScheduler(int64(i),grpID,uID)
 	if err!=nil{
-		restErr:= errors.NewNotFoundError("No Data available with that groupID")
+		restErr:= errors.NewNotFoundError("No File with fileId "+f+" available with that groupID")
 		c.JSON(restErr.Status, restErr)
 		return
 	}
-	c.String(http.StatusOK,"Success")
+	c.JSON(http.StatusOK, helpers.DownloadSuccess())
+}
+
+func (ctrl *DownloadController)Delete(c *gin.Context) {
+	grpID:=c.Param("grpID")
+	err:=ctrl.DownloadService.DeleteFiles(grpID)
+	if err!=nil{
+		restErr:= errors.NewInternalServerError("No Data for that groupId")
+		c.JSON(restErr.Status, restErr)
+		return
+	}
+	c.JSON(http.StatusOK, helpers.DownloadSuccess())
 }

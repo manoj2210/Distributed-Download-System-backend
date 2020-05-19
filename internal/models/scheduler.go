@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type Scheduler struct {
 	Url string `json:"url" bson:"url"`
 	GroupID string `json:"groupID" bson:"groupID"`
@@ -11,12 +13,13 @@ type Scheduler struct {
 type Record struct{
 	UserID string `json:"userID"" bson:"userID"`
 	FileNo int64 `json:"fileNo" bson:"fileNo"`
+	Time time.Time `json:"time" bson:"time"'`
 	Acknowledged bool `json:"ack" bson:"ack"'`
 }
 
 func NewScheduler(url,grpID string)*Scheduler{
 	var R []Record
-	R=append(R,Record{"none",0,false})
+	R=append(R,Record{"none",-1,time.Now(),false})
 	return &Scheduler{
 		Url:		 url,
 		GroupID:     grpID,
@@ -26,10 +29,11 @@ func NewScheduler(url,grpID string)*Scheduler{
 	}
 }
 
-func NewRecord(uID string,f int64)*Record{
-	return &Record{
+func NewRecord(uID string,f int64)Record{
+	return Record{
 		UserID:       uID,
 		FileNo:       f,
+		Time:         time.Now(),
 		Acknowledged: false,
 	}
 }
