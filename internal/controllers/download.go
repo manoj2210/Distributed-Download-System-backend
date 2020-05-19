@@ -115,7 +115,7 @@ func (ctrl *DownloadController) ServeFiles(c *gin.Context) {
 		c.JSON(restErr.Status, restErr)
 		return
 	}
-	//c.Header("Con")
+	c.Header("Content-Disposition", "attachment; filename="+m)
 	c.Writer.Write(k.Bytes())
 	return
 }
